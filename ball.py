@@ -49,7 +49,7 @@ def initial_balls(ball_data, points):
 
 def find_intl_ball(intl_balls): # frame_k, conf, dm, cx, cy, x1, y1, x2, y2
     # -----------------------------------------------------------------
-    # finding avarage x y centers indie intial position 
+    # finding avarage x y centers in intial position 
     x_center = []
     y_center = []
     for i in intl_balls:
@@ -69,7 +69,14 @@ def find_intl_ball(intl_balls): # frame_k, conf, dm, cx, cy, x1, y1, x2, y2
             break #continue
     print('initial move ' , initial_move)
     # -----------------------------------------------------------------
+    
+    return initial_move
 
+
+
+def ball_track(ball_data, initial_move): # frame_k, conf, dm, cx, cy, x1, y1, x2, y2
+    # -----------------------------------------------------------------
+    intl_balls = ball_data
 
     filtered_intl_balls = []
     dropped_intl_balls = []
@@ -128,6 +135,9 @@ def find_intl_ball(intl_balls): # frame_k, conf, dm, cx, cy, x1, y1, x2, y2
 
     return filtered_intl_balls, dropped_intl_balls, initial_move
 
+
+
+
 def filter_dm(ball_data, points):
     ball_fileted = []
     for i, d in enumerate(ball_data):
@@ -174,15 +184,16 @@ def main(json_data, pose_data, img_path):
     list_initial_balls = initial_balls(list_ball_info, points)
        # list_ball_info_filt = initial_balls(list_ball_info, points)
 
-    filtered_initial_balls, dropped_intl_balls, initial_move = find_intl_ball(list_initial_balls)
+    initial_move = find_intl_ball(list_initial_balls)
 
 
     # draw ceters on image 
     list_ball_info = list_ball_info
     img = draw_center_on_image(list_ball_info, img, color=(5, 55, 255))        
   #  img = draw_center_on_image(list_initial_balls, img, color=(255, 55, 255)) 
-    img = draw_center_on_image(filtered_initial_balls, img, color=(255, 55, 255)) 
-    img = draw_center_on_image(dropped_intl_balls, img, color=(255, 55, 55)) 
+    #img = draw_center_on_image(filtered_initial_balls, img, color=(255, 55, 255)) 
+    img = draw_center_on_image(list_initial_balls, img, color=(255, 55, 55)) 
+    img = draw_center_on_image([initial_move], img, color=(155, 255, 155)) 
           
     img = draw_point_on_image(points, img)        
     img = make_rect(img, points[0], points[3], color=(155, 255, 133), thickness=2)
