@@ -107,9 +107,70 @@ def ball_track(ball_data, initial_move):
     
     return
 
+def ball_track2(ball_data, initial_move): # frame_k, conf, dm, cx, cy, x1, y1, x2, y2
+    # -----------------------------------------------------------------
+    intl_balls = ball_data
+
+    filtered_intl_balls = []
+    dropped_intl_balls = []
+    im_w, im_h = 1080, 1920
+    print('number of intl balls ',len(intl_balls))
+    scale = 10.000001
+    scale2 = 0.001
+    print('scale ratio : ', im_w*scale)
+    ubn_ball = 0
+    for i, b in enumerate(intl_balls):
+        try: 
+            if not ubn_ball:
+                ubn_ball  = intl_balls[i]
+                print('ubn ball ', ubn_ball)
+           # print(b)
+            if intl_balls[i][3]<=intl_balls[i-1][3]-im_w*scale2: # im_w*0.02 = 21
+                print(b)
+                dropped_intl_balls.append(b) 
+
+            if intl_balls[i][3]>=intl_balls[i-1][3]-im_w*scale <= intl_balls[i+1][3] and intl_balls[i][3]<=intl_balls[i-1][3]+im_w*scale or intl_balls[i][4]>=intl_balls[i-1][4]-im_w*scale and intl_balls[i][4]<=intl_balls[i-1][4]+im_w*scale: # im_w*0.02 = 21
+                if  ubn_ball[3]>=intl_balls[i-1][3]-im_w*scale and ubn_ball[3]<=intl_balls[i-1][3]+im_w*scale or ubn_ball[4]>=intl_balls[i-1][4]-im_w*scale and ubn_ball[4]<=intl_balls[i-1][4]+im_w*scale:
+                    #filtered_intl_balls.append(b)
+                    ubn_ball  = intl_balls[i]
+                    #print(b)
+
+                else:
+                    print('still false detection')
+                    # dropped_intl_balls.append(b)
+                    #pass
+            else:
+                print(b)
+                ubn_ball = intl_balls[i]
+                before_ubn = intl_balls[i-1]
+                #if intl_balls[i][3]<=intl_balls[i-1][3]-im_w*scale2 or intl_balls[i][3]>=intl_balls[i-1][3]+im_w*scale2 or intl_balls[i][4]<=intl_balls[i-1][4]-im_w*scale2 or intl_balls[i][4]>=intl_balls[i-1][4]+im_w*scale2: # im_w*0.02 = 21
+                if intl_balls[i][3]<=intl_balls[i-1][3]-im_w*scale2: # im_w*0.02 = 21
+                    dropped_intl_balls.append(b)
+
+          #  if intl_balls[i][3]>65:
+           #     print(intl_balls[i])
+                
+            """     
+            print(intl_balls[i][3])
+            print(f"{intl_balls[i][3]} >= {intl_balls[i-1][3]-(im_w*scale)}")
+            print(f"{intl_balls[i][3]} <= {intl_balls[i-1][3]+im_w*scale}")
+            print(intl_balls[i][4])
+            print(f"{intl_balls[i][4]}>={intl_balls[i-1][4]-im_w*scale}")
+            print(f"{intl_balls[i][4]}<={intl_balls[i-1][4]+im_w*scale}")
+            """
+        except:
+            print('excepting, need second ball position too') 
+
+   # print(len(filtered_intl_balls))
+   # print('scale ', im_w*scale)
+    print('filtered intl balls ',len(filtered_intl_balls))
+    print('dropped intl balls ',len(dropped_intl_balls))
+
+    return filtered_intl_balls, dropped_intl_balls, initial_move
 
 
-# filter ball if diamter of second ball is bigger than first one  
+
+
 def filter_dm(ball_data, points):
     ball_fileted = []
     for i, d in enumerate(ball_data):
@@ -122,9 +183,6 @@ def filter_dm(ball_data, points):
     print('filtering is done;;')
     return ball_fileted
 
-
-
-# main function to use above functions and process ball info and write outputs on image 
 def main(json_data, pose_data, img_path):
     # read inputs
     img = im_read(img_path)
